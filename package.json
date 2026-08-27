@@ -1,5 +1,5 @@
 {
-  "name": "@prezly/react-promise-modal",
+  "name": "@e1himself/react-promise-modal",
   "version": "2.0.1",
   "description": "The proper (and easy) way of doing modals in React. With Promises.",
   "main": "dist/index.js",
@@ -21,7 +21,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/prezly/react-promise-modal.git"
+    "url": "git+https://github.com/e1himself/react-promise-modal.git"
   },
   "keywords": [
     "react",
@@ -31,12 +31,12 @@
     "await",
     "confirmation"
   ],
-  "author": "Ivan Voskboinyk <ivan@prezly.com>",
+  "author": "Ivan Voskboinyk <ivan@voskoboinyk.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/prezly/react-promise-modal/issues"
+    "url": "https://github.com/e1himself/react-promise-modal/issues"
   },
-  "homepage": "https://github.com/prezly/react-promise-modal#readme",
+  "homepage": "https://github.com/e1himself/react-promise-modal#readme",
   "dependencies": {
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0"

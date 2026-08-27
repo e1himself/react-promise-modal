@@ -1,6 +1,6 @@
 # React Promise Modal
 
-[![npm version](https://badgen.net/npm/v/@prezly/react-promise-modal)](https://www.npmjs.com/package/@prezly/react-promise-modal)
+[![npm version](https://badgen.net/npm/v/@e1himself/react-promise-modal)](https://www.npmjs.com/package/@e1himself/react-promise-modal)
 
 `usePromiseModal()` is a React hook that allows you to define a modal
 by providing a custom rendering function.
@@ -75,7 +75,7 @@ usePromiseModal(({ show, onDismiss, onSubmit }) => (
 You can easily implement a confirmation modal using `usePromiseModal()`:
 
 ```jsx
-import { usePromiseModal } from '@prezly/react-promise-modal';
+import { usePromiseModal } from '@e1himself/react-promise-modal';
 
 function MyApp() {
     const confirmation = usePromiseModal(({ show, onSubmit, onDismiss }) => {
@@ -107,7 +107,7 @@ it is submitted or dismissed -- the modal has single action anyway.
 So we only need `onDismiss`:
 
 ```jsx
-import { usePromiseModal } from '@prezly/react-promise-modal';
+import { usePromiseModal } from '@e1himself/react-promise-modal';
 
 function MyApp() {
     const alert = usePromiseModal(({ show, onDismiss }) => {
@@ -136,7 +136,7 @@ For data prompts all you need is to resolve the promise by submitting the value 
 either a scalar, or more complex shapes wrapped into an object:
 
 ```tsx
-import { usePromiseModal } from '@prezly/react-promise-modal';
+import { usePromiseModal } from '@e1himself/react-promise-modal';
 
 function MyApp() {
     const prompt = usePromiseModal<string, { title: string }>(
@@ -192,7 +192,7 @@ you can also pass extra call-time properties. Declare them with the second gener
 and then pass to the `invoke()` method:
 
 ```tsx
-import { usePromiseModal } from "@prezly/react-promise-modal";
+import { usePromiseModal } from "@e1himself/react-promise-modal";
 
 const failureFeedback = usePromiseModal<undefined, { status: Status, failures: OperationFailure[] }>(
     ({ status, failures, show, onSubmit, onDismiss }) => (
@@ -213,4 +213,5 @@ async function handleFlakyOperation() {
 
 # Credits
 
-Brought to you with :metal: by [Prezly](https://www.prezly.com/?utm_source=github&utm_campaign=react-promise-modal).
+Brought to you with :metal: by [Ivan Voskoboinyk](https://voskoboinyk.com/?utm_source=github&utm_campaign=react-promise-modal)
+while working in [Prezly](https://www.prezly.com/?utm_source=github&utm_campaign=react-promise-modal).
