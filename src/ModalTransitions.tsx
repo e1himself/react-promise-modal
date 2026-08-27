@@ -15,7 +15,7 @@ type Props = {
 
 type RenderProps = {
     isOpen: boolean;
-    stage: `${Stage.CLOSED | Stage.OPEN | Stage.OPENING | Stage.CLOSING}`; // Note: not rendering "closed" stage
+    stage: `${Stage.CLOSED | Stage.OPEN | Stage.OPENING | Stage.CLOSING}`; // Note: not rendering "unmounted" stage
     onClose: () => void;
 };
 
@@ -104,7 +104,7 @@ export function ModalTransitions({ isOpen: shouldOpen, onClosed, transitionDurat
     }, [open]);
 
     if (stage === Stage.UNMOUNTED) {
-        // Do not render anything in "closed" stage
+        // Do not render anything in "unmounted" stage
         return null;
     }
 
