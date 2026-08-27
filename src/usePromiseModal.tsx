@@ -19,7 +19,7 @@ type RenderFunction<P> = (props: P) => React.ReactElement | null | undefined;
 
 interface RenderProps<T> {
     show: boolean;
-    stage: "open" | "opening" | "closing";
+    stage: "closed" | "opening" | "open" | "closing";
     onDismiss: () => void;
     onSubmit: (value: Exclude<T, undefined>) => void;
 }

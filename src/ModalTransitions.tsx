@@ -15,11 +15,12 @@ type Props = {
 
 type RenderProps = {
     isOpen: boolean;
-    stage: `${Stage.OPEN | Stage.OPENING | Stage.CLOSING}`; // Note: not rendering "closed" stage
+    stage: `${Stage.CLOSED | Stage.OPEN | Stage.OPENING | Stage.CLOSING}`; // Note: not rendering "closed" stage
     onClose: () => void;
 };
 
 export enum Stage {
+    UNMOUNTED = "unmounted",
     OPEN = "open",
     OPENING = "opening",
     CLOSING = "closing",
@@ -28,7 +29,7 @@ export enum Stage {
 
 export function ModalTransitions({ isOpen: shouldOpen, onClosed, transitionDuration, render }: Props) {
     const isMounted = useIsMounted();
-    const [stage, setStage] = React.useState<Stage>(Stage.CLOSED);
+    const [stage, setStage] = React.useState<Stage>(Stage.UNMOUNTED);
     const refs = useLatest({
         stage,
         onClosed,
@@ -46,13 +47,20 @@ export function ModalTransitions({ isOpen: shouldOpen, onClosed, transitionDurat
 
         let cancel = false;
 
-        setStage(Stage.OPENING);
-        delay(refs.current.transitionDuration).then(() => {
-            if (cancel || !isMounted()) {
-                return;
-            }
-            setStage(Stage.OPEN);
-        });
+        // First, render it closed
+        setStage(Stage.CLOSED);
+
+        // Then, immediately start "opening" sequence
+        delay(0)
+            .then(() => setStage(Stage.OPENING))
+            .then(() => delay(refs.current.transitionDuration)) // Wait another `transitionDelay`
+            .then(() => {
+                if (cancel || !isMounted()) {
+                    return;
+                }
+                // Mark it open.
+                setStage(Stage.OPEN);
+            });
 
         return () => {
             cancel = true;
@@ -71,13 +79,16 @@ export function ModalTransitions({ isOpen: shouldOpen, onClosed, transitionDurat
         let cancel = false;
 
         setStage(Stage.CLOSING);
-        delay(refs.current.transitionDuration).then(() => {
-            if (cancel || !isMounted()) {
-                return;
-            }
-            setStage(Stage.CLOSED);
-            refs.current.onClosed?.();
-        });
+        delay(refs.current.transitionDuration)
+            .then(() => {
+                if (cancel || !isMounted()) {
+                    return;
+                }
+                setStage(Stage.CLOSED);
+                refs.current.onClosed?.();
+            })
+            .then(() => delay(0))
+            .then(() => setStage(Stage.UNMOUNTED));
 
         return () => {
             cancel = true;
@@ -92,7 +103,7 @@ export function ModalTransitions({ isOpen: shouldOpen, onClosed, transitionDurat
         }
     }, [open]);
 
-    if (stage === Stage.CLOSED) {
+    if (stage === Stage.UNMOUNTED) {
         // Do not render anything in "closed" stage
         return null;
     }
