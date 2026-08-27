@@ -11,11 +11,10 @@ jobs:
     steps:
       - uses: actions/checkout@master
 
-      - name: Setup Environment
-        uses: prezly/setup-github-actions@v1
+      - name: Setup Node.js v${{ matrix.node-version }}
+        uses: actions/setup-node@v1
         with:
-          node: ${{ matrix.node-version }}
-          pnpm: "9.4.0"
+          node-version: ${{ matrix.node-version }}
 
       - name: Set React ${{ matrix.react-version }}
         uses: prezly/pnpm-overrides-action@v1
