@@ -101,7 +101,7 @@ export function ModalTransitions({ isOpen: shouldOpen, onClosed, transitionDurat
         } else {
             return onClose();
         }
-    }, [open]);
+    }, [shouldOpen]);
 
     if (stage === Stage.UNMOUNTED) {
         // Do not render anything in "unmounted" stage
