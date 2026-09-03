@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { delay, noop } from "./lib";
+import { delay } from "./lib";
 import { useIsMounted } from "./useIsMounted";
 import { useLatest } from "./useLatest";
 
@@ -15,16 +15,16 @@ type Props = {
 
 type RenderProps = {
     isOpen: boolean;
-    stage: `${Stage.CLOSED | Stage.OPEN | Stage.OPENING | Stage.CLOSING}`; // Note: not rendering "unmounted" stage
     onClose: () => void;
 };
 
 export enum Stage {
     UNMOUNTED = "unmounted",
+    STANDBY = "standby", // same as "closed", but before "opening"
     OPEN = "open",
     OPENING = "opening",
     CLOSING = "closing",
-    CLOSED = "closed",
+    CLOSED = "closed", // same as "standby", but after "closing"
 }
 
 export function ModalTransitions({ isOpen: shouldOpen, onClosed, transitionDuration, render }: Props) {
@@ -37,63 +37,72 @@ export function ModalTransitions({ isOpen: shouldOpen, onClosed, transitionDurat
     });
 
     const onOpen = React.useEffectEvent(() => {
-        if (!isMounted()) {
-            return noop;
+        // If it's UNMOUNTED or CLOSED: switch to STANDBY to prepare for OPENING.
+        if (stage === Stage.UNMOUNTED || stage === Stage.CLOSED) {
+            setStage(Stage.STANDBY);
         }
 
-        if (refs.current.stage === Stage.OPENING || refs.current.stage === Stage.OPEN) {
-            return noop; // Nothing to do
+        // If it's CLOSING: override and start OPENING.
+        if (stage === Stage.CLOSING) {
+            setStage(Stage.OPENING);
         }
 
-        let cancel = false;
-
-        // First, render it closed
-        setStage(Stage.CLOSED);
-
-        // Then, immediately start "opening" sequence
-        delay(0)
-            .then(() => setStage(Stage.OPENING))
-            .then(() => delay(refs.current.transitionDuration)) // Wait another `transitionDelay`
-            .then(() => {
-                if (cancel || !isMounted()) {
-                    return;
-                }
-                // Mark it open.
-                setStage(Stage.OPEN);
-            });
-
-        return () => {
-            cancel = true;
-        };
+        // If opening is requested while it's STANDBY, OPENING or already OPEN: do nothing.
+        // The `useLayoutEffect()` hook below will do the rest.
     });
 
     const onClose = React.useEffectEvent(() => {
-        if (!isMounted()) {
-            return noop;
+        // If it's OPENING or already OPEN: override and start CLOSING.
+        if (stage === Stage.OPENING || stage === Stage.OPEN) {
+            setStage(Stage.CLOSING);
         }
 
-        if (refs.current.stage === Stage.CLOSING || refs.current.stage === Stage.CLOSED) {
-            return noop; // Nothing to do
+        // If it was in STANDBY preparing for OPENING: override and mark CLOSED.
+        if (stage === Stage.STANDBY) {
+            setStage(Stage.CLOSED);
         }
 
+        // If opening is requested while it's UNMOUNTED, CLOSING or already CLOSED: do nothing.
+        // The `useLayoutEffect()` hook below will do the rest.
+    });
+
+    React.useLayoutEffect(() => {
         let cancel = false;
 
-        setStage(Stage.CLOSING);
-        delay(refs.current.transitionDuration)
-            .then(() => {
-                if (cancel || !isMounted()) {
-                    return;
+        if (stage === Stage.STANDBY) {
+            // If it's in STANDBY (no longer unmounted, prepared for opening): start OPENING.
+            setStage(Stage.OPENING);
+        }
+
+        if (stage === Stage.OPENING) {
+            // Allow the transitions to happen and then switch to OPEN.
+            delay(refs.current.transitionDuration).then(() => {
+                // If the OPENING sequence was not canceled with later calls, mark it OPEN.
+                if ( ! cancel) {
+                    setStage(Stage.OPEN);
                 }
-                setStage(Stage.CLOSED);
-                refs.current.onClosed?.();
-            })
-            .then(() => delay(0))
-            .then(() => setStage(Stage.UNMOUNTED));
+            });
+        }
+
+        if (stage === Stage.CLOSING) {
+            delay(refs.current.transitionDuration).then(() => {
+                // If the CLOSING sequence was not canceled with later calls, mark it CLOSED.
+                if ( ! cancel) {
+                    setStage(Stage.CLOSED);
+                }
+            });
+        }
+
+        if (stage === Stage.CLOSED) {
+            // Once the CLOSED state is rendered, trigger the onClosed callback and immediately switch to UNMOUNTED
+            refs.current.onClosed?.();
+            setStage(Stage.UNMOUNTED);
+        }
 
         return () => {
             cancel = true;
         };
-    });
+    }, [stage]);
 
     React.useEffect(() => {
         if (shouldOpen) {
@@ -109,7 +118,6 @@ export function ModalTransitions({ isOpen: shouldOpen, onClosed, transitionDurat
     }
 
     return render({
-        stage,
         isOpen: stage === Stage.OPEN || stage === Stage.OPENING,
         onClose,
     });

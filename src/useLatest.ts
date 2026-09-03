@@ -12,6 +12,10 @@ import * as React from "react";
  */
 export function useLatest<T>(value: T): { readonly current: T } {
     const ref = React.useRef<T>(value);
-    ref.current = value;
+
+    React.useLayoutEffect(() => {
+        ref.current = value;
+    }, [value]);
+
     return ref;
 }
