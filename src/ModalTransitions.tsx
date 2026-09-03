@@ -14,7 +14,6 @@ type Props = {
 };
 
 type RenderProps = {
-    stage: string;
     isOpen: boolean;
     onClose: () => void;
 };
@@ -124,7 +123,6 @@ export function ModalTransitions({ isOpen: shouldOpen, onClosed, transitionDurat
     }
 
     return render({
-        stage,
         isOpen: stage === Stage.OPEN || stage === Stage.OPENING,
         onClose,
     });
