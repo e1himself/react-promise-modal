@@ -36,7 +36,7 @@ export function ModalTransitions({ isOpen: shouldOpen, onClosed, transitionDurat
         transitionDuration,
     });
 
-    const onOpen = React.useCallback(() => {
+    const onOpen = React.useEffectEvent(() => {
         if (!isMounted()) {
             return noop;
         }
@@ -65,9 +65,9 @@ export function ModalTransitions({ isOpen: shouldOpen, onClosed, transitionDurat
         return () => {
             cancel = true;
         };
-    }, []);
+    });
 
-    const onClose = React.useCallback(() => {
+    const onClose = React.useEffectEvent(() => {
         if (!isMounted()) {
             return noop;
         }
@@ -93,7 +93,7 @@ export function ModalTransitions({ isOpen: shouldOpen, onClosed, transitionDurat
         return () => {
             cancel = true;
         };
-    }, []);
+    });
 
     React.useEffect(() => {
         if (shouldOpen) {
@@ -101,7 +101,7 @@ export function ModalTransitions({ isOpen: shouldOpen, onClosed, transitionDurat
         } else {
             return onClose();
         }
-    }, [open]);
+    }, [shouldOpen]);
 
     if (stage === Stage.UNMOUNTED) {
         // Do not render anything in "unmounted" stage
