@@ -5,8 +5,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version:  [20, 22, 24]
-        react-version: [18, 19]
+        node-version:  [22, 24, 26]
+        react-version: [19]
 
     steps:
       - uses: actions/checkout@master
@@ -15,14 +15,13 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'npm'
 
       - name: Set React ${{ matrix.react-version }}
         run:
-          npm install \
-            @types/react@${{ matrix.react-version }} \
+          npm install
+            @types/react@${{ matrix.react-version }}
             @types/react-dom@${{ matrix.react-version }}
-            react@${{ matrix.react-version }} \
+            react@${{ matrix.react-version }}
             react-dom@${{ matrix.react-version }}
 
       - name: Install dependencies
