@@ -1,6 +1,6 @@
 {
   "name": "@e1himself/react-promise-modal",
-  "version": "2.0.2",
+  "version": "3.0.0",
   "description": "The proper (and easy) way of doing modals in React. With Promises.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
