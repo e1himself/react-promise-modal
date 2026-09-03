@@ -19,6 +19,7 @@ type RenderFunction<P> = (props: P) => React.ReactElement | null | undefined;
 
 interface RenderProps<T> {
     show: boolean;
+    stage: string;
     onDismiss: () => void;
     onSubmit: (value: Exclude<T, undefined>) => void;
 }
@@ -72,9 +73,10 @@ export function usePromiseModal<T, Args extends object>(
                             }
                         }}
                         transitionDuration={transitionDuration}
-                        render={({ isOpen, onClose }) =>
+                        render={({ isOpen, stage, onClose }) =>
                             render({
                                 ...args,
+                                stage,
                                 show: isOpen,
                                 onDismiss: () => {
                                     deferred.resolve(undefined);
