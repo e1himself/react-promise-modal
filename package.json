@@ -17,7 +17,7 @@
     "test:types": "tsc --project ./tsconfig.test.json",
     "test:ts": "tsc --noEmit --lib es2018,dom --jsx react --skipLibCheck ./test/typescript.test.tsx",
     "test:build": "node test/commonjs.test.js",
-    "publish": "np"
+    "release": "np"
   },
   "repository": {
     "type": "git",
