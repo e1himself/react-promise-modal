@@ -39,12 +39,12 @@ export function ModalTransitions({ isOpen: shouldOpen, onClosed, transitionDurat
         setStage((stage) => {
             // If it's UNMOUNTED or CLOSED: switch to STANDBY to prepare for OPENING.
             if (stage === Stage.UNMOUNTED || stage === Stage.CLOSED) {
-                setStage(Stage.STANDBY);
+                return Stage.STANDBY;
             }
 
             // If it's CLOSING: override and start OPENING.
             if (stage === Stage.CLOSING) {
-                setStage(Stage.OPENING);
+                return Stage.OPENING;
             }
 
             // If opening is requested while it's STANDBY, OPENING or already OPEN: do nothing.
